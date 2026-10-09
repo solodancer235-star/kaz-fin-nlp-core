@@ -30,19 +30,6 @@ for stream in (sys.stdout, sys.stderr):
         except (OSError, ValueError):
             pass
 
-import time
-from typing import List, Tuple
-
-from kaz_fin_nlp import (
-    BilingualTextPreprocessor,
-    FinancialEntityExtractor,
-    FinancialSentimentAnalyzer,
-    MarketIncidentReportBuilder,
-    MarketUrgency,
-    StreamTelemetryTracker,
-    __version__,
-)
-
 SAMPLE_ARTICLES: List[Tuple[str, str, str]] = [
     (
         "KASE: Kaspi.kz акциялары 12% өсім көрсетіп, тарихи максимумға жетті. "
