@@ -8,6 +8,18 @@ and LLM incident report export.
 import argparse
 import json
 import sys
+import time
+from typing import List, Tuple
+
+from kaz_fin_nlp import (
+    BilingualTextPreprocessor,
+    FinancialEntityExtractor,
+    FinancialSentimentAnalyzer,
+    MarketIncidentReportBuilder,
+    MarketUrgency,
+    StreamTelemetryTracker,
+    __version__,
+)
 
 # Reconfigure stdout/stderr for cross-platform UTF-8 terminal printing
 for stream in (sys.stdout, sys.stderr):
