@@ -8,6 +8,14 @@ and LLM incident report export.
 import argparse
 import json
 import sys
+
+# Reconfigure stdout/stderr for cross-platform UTF-8 terminal printing
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 import time
 from typing import List, Tuple
 
