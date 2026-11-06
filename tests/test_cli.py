@@ -11,7 +11,7 @@ def test_cli_version(capsys: pytest.CaptureFixture[str]) -> None:
         main(["--version"])
     assert exc.value.code == 0
     captured = capsys.readouterr()
-    assert "0.1.0" in captured.out
+    assert "0.2.0" in captured.out
 
 
 def test_cli_help(capsys: pytest.CaptureFixture[str]) -> None:
