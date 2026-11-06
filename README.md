@@ -172,6 +172,55 @@ bandit -r kaz_fin_nlp
 
 ---
 
-## 6. License
+## 6. DevOps: Docker, Jenkins CI/CD and Kubernetes (Assignment 5)
+
+| Path | Purpose |
+|---|---|
+| `kaz_fin_nlp/api.py` | FastAPI service: `GET /health`, `POST /analyze`, `GET /metrics` |
+| `Dockerfile` | multi-stage, non-root image with health check |
+| `Jenkinsfile` | declarative CI/CD pipeline |
+| `jenkins/` | Docker Compose setup for a local Jenkins server |
+| `k8s/` | Deployment + NodePort Service for Minikube |
+| `scripts/run_pipeline_locally.sh` | runs the CI stages without Jenkins |
+
+**Pipeline:** Checkout -> Set up Python -> [black+flake8 | mypy | bandit] -> pytest (coverage >= 90%)
+-> Docker build -> container smoke test -> *(main only)* push to Docker Hub -> deploy to Minikube.
+
+### Run the API
+
+```bash
+uvicorn kaz_fin_nlp.api:app --reload            # http://localhost:8000/docs
+docker build -t kaz-fin-nlp-core:local .
+docker run -p 8000:8000 kaz-fin-nlp-core:local
+curl -X POST localhost:8000/analyze -H 'Content-Type: application/json' \
+     -d '{"text":"KZTO net profit up 35%","source":"KASE_WIRE"}'
+```
+
+### Jenkins
+
+```bash
+docker compose -f jenkins/docker-compose.yml up -d --build
+docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
+
+1. Open http://localhost:8080, install suggested plugins, create an admin user.
+2. *Manage Jenkins -> Credentials*: add `dockerhub-creds` (username + access token) and
+   `minikube-kubeconfig` (secret file) for the CD stages.
+3. *New Item -> Multibranch Pipeline* -> this repository, script path `Jenkinsfile`.
+4. GitHub *Settings -> Webhooks*: `http://<jenkins-host>:8080/github-webhook/` (push events).
+   A Jenkins on localhost picks up commits through `pollSCM('H/2 * * * *')` instead.
+
+### Kubernetes (Minikube)
+
+```bash
+minikube start
+kubectl apply -f k8s/
+kubectl rollout status deployment/kaz-fin-nlp
+minikube service kaz-fin-nlp --url
+```
+
+---
+
+## 7. License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
