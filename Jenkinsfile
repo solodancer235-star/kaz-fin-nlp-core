@@ -21,8 +21,8 @@ pipeline {
     }
 
     environment {
-        // Change to your Docker Hub namespace
-        IMAGE_NAME   = 'solodancer235/kaz-fin-nlp-core'
+        // Docker Hub namespace comes from the Jenkins container environment (jenkins/.env)
+        IMAGE_NAME   = "${env.DOCKERHUB_USER ?: 'solodancer235'}/kaz-fin-nlp-core"
         IMAGE_TAG    = "${env.BUILD_NUMBER}-${env.GIT_COMMIT?.take(7) ?: 'local'}"
         VENV         = "${env.WORKSPACE}/.venv"
         COVERAGE_MIN = '90'

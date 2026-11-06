@@ -7,4 +7,8 @@ credentials-binding
 docker-workflow
 kubernetes-cli
 timestamper
-blueocean
+configuration-as-code
+job-dsl
+cloudbees-folder
+workflow-multibranch
+branch-api

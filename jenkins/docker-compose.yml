@@ -1,17 +1,27 @@
-# Local Jenkins server.  Start:  docker compose -f jenkins/docker-compose.yml up -d --build
-# UI: http://localhost:8080   initial password:
-#   docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+# Local Jenkins server, fully pre-configured via Configuration as Code.
+#
+#   1. copy jenkins/.env.example to jenkins/.env and fill in Docker Hub credentials
+#   2. put a kubeconfig for Minikube into jenkins/secrets/kubeconfig
+#      (an empty file is fine if you do not use the CD stage)
+#   3. docker compose -f jenkins/docker-compose.yml up -d --build
+#   4. open http://localhost:8080  (admin / password from .env)
 services:
   jenkins:
     build: .
     container_name: jenkins
     user: root            # needed to use the host Docker socket in a lab setup
+    env_file:
+      - .env
+    environment:
+      CASC_JENKINS_CONFIG: /usr/share/jenkins/ref/casc.yaml
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./secrets:/run/secrets:ro
     restart: unless-stopped
 
 volumes:
