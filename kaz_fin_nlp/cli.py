@@ -145,11 +145,13 @@ def run_analyze(text: str) -> int:
     extractor = FinancialEntityExtractor()
     builder = MarketIncidentReportBuilder()
 
+    # Law No. 94-V: downstream report and LLM prompt must never see raw PII.
+    safe_text, _ = preprocessor.sanitize_pii(text)
     doc = preprocessor.process(text)
     sentiment = analyzer.analyze(doc.stems, raw_text=doc.cleaned_text)
-    entities = extractor.extract_entities(text)
+    entities = extractor.extract_entities(safe_text)
     report = builder.build_report(
-        headline=text,
+        headline=safe_text,
         source="CLI_INPUT",
         language=doc.detected_language.value,
         sentiment=sentiment,

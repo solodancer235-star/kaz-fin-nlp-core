@@ -57,3 +57,10 @@ def test_cli_export_report(tmp_path: pytest.TempPathFactory) -> None:
         data = json.load(f)
     assert "report_id" in data
     assert "regulatory" in data
+
+
+def test_cli_analyze_redacts_pii(capsys: pytest.CaptureFixture[str]) -> None:
+    iin = "990101300123"
+    code = main(["analyze", "--text", f"Директор ИИН {iin} уволен, акции KZTO упали"])
+    assert code == 0
+    assert iin not in capsys.readouterr().out
