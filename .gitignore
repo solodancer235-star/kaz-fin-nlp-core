@@ -29,3 +29,6 @@ coverage.xml
 .venv
 venv/
 *.log
+
+# CI reports
+reports/
